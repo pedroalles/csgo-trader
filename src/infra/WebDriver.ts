@@ -11,6 +11,8 @@ import {
   ISticker,
 } from "../interface/ISticker";
 
+const TABLE_WAIT = 3 * 1000;
+
 export class Driver {
   driver!: webdriver.WebDriver;
 
@@ -30,7 +32,7 @@ export class Driver {
         "--no-sandbox",
         "--disable-gpu",
         "--disable-dev-shm-usage",
-        // "--headless",
+        "--headless",
         // "--window-size=1920,1080"
       ]
     );
@@ -141,7 +143,7 @@ export class Driver {
       // throw new Error("ERROOOOOO");
       const tableExist = await this.driver.wait(
         until.elementLocated(tableLocator),
-        5000
+        TABLE_WAIT
       );
 
       // console.log("---", tableExist);
@@ -209,7 +211,7 @@ export class Driver {
       // throw new Error("ERROOOOOO");
       const tableExist = await this.driver.wait(
         until.elementLocated(tableLocator),
-        5000
+        TABLE_WAIT
       );
 
       // console.log("---", tableExist);
