@@ -36,6 +36,7 @@ export class Driver {
         // "--window-size=1920,1080"
       ]
     );
+    chromeOptions.excludeSwitches("enable-logging");
 
     this.driver = await new Builder()
       .withCapabilities(webdriver.Capabilities.chrome())
@@ -83,10 +84,8 @@ export class Driver {
   }
 
   async getOrdersData() {
-    // this.refresh();
-
     const ordersElements = await this.driver.findElements(
-      By.css('div[id*="mybuyorder"]')
+      By.xpath("//div[contains(@id,'mybuyorder')][not(contains(.,'0,03'))]")
     );
 
     const ordersData = await Promise.all(
@@ -111,6 +110,37 @@ export class Driver {
     );
 
     return ordersData;
+  }
+
+  async getMonitoringData() {
+    const monitoringElements = await this.driver.findElements(
+      By.xpath(
+        "//div[contains(@id,'mybuyorder')][.//span[contains(.,'R$ 0,03')]]"
+      )
+    );
+
+    const monitoringData = await Promise.all(
+      monitoringElements.map(async (el) => ({
+        name: await (
+          await el.findElement(By.className("market_listing_item_name_link"))
+        ).getText(),
+        value: await (
+          await el.findElement(By.css('span[class="market_listing_price"]'))
+        ).getText(),
+        link: await (
+          await el.findElement(By.className("market_listing_item_name_link"))
+        ).getAttribute("href"),
+        image: (
+          await (
+            await el.findElement(By.css('img[id*="mybuyorder"]'))
+          ).getAttribute("srcset")
+        )
+          .split(",")[1]
+          .trim(),
+      }))
+    );
+
+    return monitoringData;
   }
 
   async getSaleData(): Promise<ISaleInfos> {
@@ -264,28 +294,6 @@ export class Driver {
     );
   }
 
-  roundValue(value: number): string {
-    const round = Math.round((value + Number.EPSILON) * 100) / 100;
-    const fixed = round.toFixed(2);
-
-    console.log(value);
-    console.log(round);
-    console.log(fixed);
-    console.log("--");
-
-    return fixed.replace(".", ",");
-  }
-
-  // roundValue(value: number): number {
-  //   console.log(value);
-
-  //   return +value.toFixed(2);
-  // }
-
-  formatValue(value: string): number {
-    return Number(value.replace("R$ ", "").replace(",", "."));
-  }
-
   processSalesData(data: ISticker[]): ISale[] {
     return data.map((el) => ({
       name: el.name,
@@ -307,29 +315,33 @@ export class Driver {
     }));
   }
 
-  processOrdersData(data: ISticker[]): {
-    orders: IOrder[];
-    monitoring: IMonitoring[];
-  } {
-    return {
-      orders: data
-        .filter((el) => el.value !== "R$ 0,03")
-        .map((el) => ({
-          name: el.name,
-          link: el.link,
-          image: el.image,
-          buyValue: el.value,
-          quantity: "1",
-        })),
-      monitoring: data
-        .filter((el) => el.value === "R$ 0,03")
-        .map((el) => ({
-          name: el.name,
-          link: el.link,
-          image: el.image,
-          buyValue: el.value,
-        })),
-    };
+  processOrdersData(data: ISticker[]): IOrder[] {
+    return data.map((el) => ({
+      name: el.name,
+      link: el.link,
+      image: el.image,
+      buyValue: el.value,
+      quantity: "1",
+    }));
+  }
+
+  processMonitoringData(data: ISticker[]): IMonitoring[] {
+    return data.map((el) => ({
+      name: el.name,
+      link: el.link,
+      image: el.image,
+      buyValue: el.value,
+    }));
+  }
+
+  roundValue(value: number): string {
+    const round = Math.round((value + Number.EPSILON) * 100) / 100;
+    const fixed = round.toFixed(2);
+    return fixed.replace(".", ",");
+  }
+
+  formatValue(value: string): number {
+    return Number(value.replace("R$ ", "").replace(",", "."));
   }
 
   async refresh() {
@@ -367,38 +379,3 @@ export class Driver {
     });
   }
 }
-
-// async function main() {
-
-//     let RUN = true;
-
-//     while (RUN) {
-
-//         try {
-//             const driver = new Driver()
-//             await driver.buildDriver()
-
-//             await driver.goToMarket()
-
-//             const sales = await driver.getSalesData()
-//             console.log(sales);
-
-//             const orders = await driver.getOrdersData()
-//             console.log(orders);
-
-//             await driver.quit()
-//         }
-
-//         catch (error) {
-//             RUN = false
-//         }
-
-//         finally {
-
-//         }
-
-//     }
-
-// }
-
-// main()

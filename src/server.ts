@@ -69,16 +69,18 @@ app.get("/all", async (_req: Request, res: Response, next: NextFunction) => {
     // await driver.goToMarket();
     const sales = await driver.getSalesData();
     const orders = await driver.getOrdersData();
+    const monitoring = await driver.getMonitoringData();
 
-    const all = {
+    const allData = {
       sales: driver.processSalesData(sales),
-      ...driver.processOrdersData(orders),
+      orders: driver.processOrdersData(orders),
+      monitoring: driver.processMonitoringData(monitoring),
     };
 
     await driver.quit();
 
     return res.status(200).json({
-      data: all,
+      data: allData,
     });
   } catch (error) {
     console.log(error);
@@ -94,12 +96,12 @@ app.get("/orders", async (req: Request, res: Response, next: NextFunction) => {
     await driver.getMarket();
 
     // await driver.goToMarket();
-    const orders = await driver.getOrdersData();
+    const ordersData = await driver.getOrdersData();
 
     await driver.quit();
 
     return res.status(200).json({
-      data: orders,
+      data: ordersData,
     });
   } catch (error) {
     console.log(error);
@@ -115,12 +117,12 @@ app.get("/sales", async (req: Request, res: Response, next: NextFunction) => {
     await driver.getMarket();
 
     // await driver.goToMarket();
-    const sales = await driver.getSalesData();
+    const salesData = await driver.getSalesData();
 
     await driver.quit();
 
     return res.status(200).json({
-      data: sales,
+      data: salesData,
     });
   } catch (error) {
     console.log(error);
@@ -128,6 +130,30 @@ app.get("/sales", async (req: Request, res: Response, next: NextFunction) => {
     return res.status(500).json({ message: "Internal Server Error", error });
   }
 });
+
+app.get(
+  "/monitoring",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const driver = new Driver();
+    try {
+      await driver.buildDriver();
+      await driver.getMarket();
+
+      // await driver.goToMarket();
+      const monitoringData = await driver.getMonitoringData();
+
+      await driver.quit();
+
+      return res.status(200).json({
+        data: monitoringData,
+      });
+    } catch (error) {
+      console.log(error);
+      await driver.quit();
+      return res.status(500).json({ message: "Internal Server Error", error });
+    }
+  }
+);
 
 app.get("/sale", async (req: Request, res: Response, next: NextFunction) => {
   const driver = new Driver();

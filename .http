@@ -13,6 +13,11 @@ content-type: application/json
 
 ###
 
+GET http://localhost:3001/monitoring HTTP/1.1
+content-type: application/json
+
+###
+
 GET http://localhost:3001/all HTTP/1.1
 content-type: application/json
 
