@@ -3,6 +3,11 @@ content-type: application/json
 
 ###
 
+GET http://localhost:3001/all HTTP/1.1
+content-type: application/json
+
+###
+
 GET http://localhost:3001/sales HTTP/1.1
 content-type: application/json
 
@@ -18,15 +23,9 @@ content-type: application/json
 
 ###
 
-GET http://localhost:3001/all HTTP/1.1
-content-type: application/json
-
-###
-
 GET http://localhost:3001/sale
     ?url=https://steamcommunity.com/market/listings/730/Sticker%20%7C%20Sharks%20Esports%20%28Foil%29%20%7C%20Stockholm%202021
 content-type: application/json
-
 
 ###
 

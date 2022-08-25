@@ -51,7 +51,8 @@ export class Driver {
     // this.refresh();
 
     const salesContainerElement = await this.driver.findElement(
-      By.xpath("//*[@id='tabContentsMyActiveMarketListingsRows']")
+      // By.xpath("//*[@id='tabContentsMyActiveMarketListingsRows']")
+      By.xpath("//*[@id='tabContentsMyActiveMarketListingsTable']")
     );
 
     const salesElements = await salesContainerElement.findElements(
@@ -435,7 +436,9 @@ export class Driver {
       array.map(async (row) => {
         const values = await row.findElements(By.css("td"));
         return {
-          value: await values[0].getText(),
+          value: (await values[0].getText())
+            .replace("or more", "")
+            .replace("or less", ""),
           quantity: await values[1].getText(),
         };
       })
