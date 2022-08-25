@@ -163,7 +163,7 @@ app.get("/sale", async (req: Request, res: Response, next: NextFunction) => {
     await driver.buildDriver();
     await driver.getPageByUrl(url);
 
-    const saleData = await driver.getSaleData();
+    const saleData = await driver.getSaleInfoData();
 
     await driver.quit();
 
@@ -185,7 +185,7 @@ app.get("/order", async (req: Request, res: Response, next: NextFunction) => {
     await driver.buildDriver();
     await driver.getPageByUrl(url);
 
-    const orderData = await driver.getOrderData();
+    const orderData = await driver.getOrderInfoData();
 
     await driver.quit();
 
@@ -198,6 +198,31 @@ app.get("/order", async (req: Request, res: Response, next: NextFunction) => {
     return res.status(500).json({ message: "Internal Server Error", error });
   }
 });
+
+app.get(
+  "/monitoring/info",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const driver = new Driver();
+    try {
+      const url = req.query.url as string;
+
+      await driver.buildDriver();
+      await driver.getPageByUrl(url);
+
+      const monitoringInfoData = await driver.getMonitoringInfoData();
+
+      await driver.quit();
+
+      return res.status(200).json({
+        data: monitoringInfoData,
+      });
+    } catch (error) {
+      console.log(error);
+      await driver.quit();
+      return res.status(500).json({ message: "Internal Server Error", error });
+    }
+  }
+);
 
 const PORT = 3001;
 

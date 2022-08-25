@@ -15,6 +15,15 @@ export interface ISale extends IStickerWithouValue {
   profitPercent: string;
 }
 
+export interface IOrder extends IStickerWithouValue {
+  buyValue: string;
+  quantity: string;
+}
+
+export interface IMonitoring extends IStickerWithouValue {
+  buyValue: string;
+}
+
 export interface ISaleInfos {
   quantity: string;
   startingValue: string;
@@ -27,11 +36,11 @@ export interface IOrderInfos {
   table: { value: string; quantity: string }[];
 }
 
-export interface IOrder extends IStickerWithouValue {
-  buyValue: string;
-  quantity: string;
-}
-
-export interface IMonitoring extends IStickerWithouValue {
-  buyValue: string;
+export interface IMonitoringInfos {
+  saleQuantity: string;
+  saleStartingValue: string;
+  orderQuantity: string;
+  orderStartingValue: string;
+  saleTable: { value: string; quantity: string }[];
+  orderTable: { value: string; quantity: string }[];
 }

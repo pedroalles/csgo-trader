@@ -4,6 +4,7 @@ import webdriver from "selenium-webdriver";
 import { elementIsDisabled } from "selenium-webdriver/lib/until";
 import {
   IMonitoring,
+  IMonitoringInfos,
   IOrder,
   IOrderInfos,
   ISale,
@@ -143,7 +144,7 @@ export class Driver {
     return monitoringData;
   }
 
-  async getSaleData(): Promise<ISaleInfos> {
+  async getSaleInfoData(): Promise<ISaleInfos> {
     console.log("INICIO DO GET SALE DATA");
 
     const tableLocator = By.xpath(
@@ -184,7 +185,7 @@ export class Driver {
       await this.driver.navigate().refresh();
 
       console.log(" DEPOIS DO REFRESH");
-      return await this.getSaleData();
+      return await this.getSaleInfoData();
     }
 
     const tableElement = await this.driver.findElement(tableLocator);
@@ -211,7 +212,7 @@ export class Driver {
     };
   }
 
-  async getOrderData(): Promise<IOrderInfos> {
+  async getOrderInfoData(): Promise<IOrderInfos> {
     console.log("INICIO DO GET ORDER DATA");
 
     const tableLocator = By.xpath(
@@ -252,7 +253,7 @@ export class Driver {
       await this.driver.navigate().refresh();
 
       console.log(" DEPOIS DO REFRESH");
-      return await this.getOrderData();
+      return await this.getOrderInfoData();
     }
 
     const tableElement = await this.driver.findElement(tableLocator);
@@ -277,6 +278,153 @@ export class Driver {
       quantity: quantityText,
       startingValue: startingValueText,
       table: tableValues,
+    };
+  }
+
+  async getMonitoringInfoData(): Promise<IMonitoringInfos> {
+    const saleTableLocator = By.xpath(
+      '//*[@id="market_commodity_forsale_table"]/table'
+    );
+
+    const saleQuantityLocator = By.xpath(
+      '//*[@id="market_commodity_forsale_table"]/../..//span[1]'
+    );
+
+    const saleStartingValueLocator = By.xpath(
+      '//*[@id="market_commodity_forsale_table"]/../..//span[2]'
+    );
+
+    // const tableContainerLocator = By.xpath(
+    //   '//*[@id="market_commodity_forsale_table"]'
+    // );
+
+    // const tableContainerExist = await this.driver.wait(
+    //   until.elementLocated(tableContainerLocator),
+    //   1000
+    // );
+
+    // console.log("---", tableContainerExist);
+
+    try {
+      // throw new Error("ERROOOOOO");
+      const tableExist = await this.driver.wait(
+        until.elementLocated(saleTableLocator),
+        TABLE_WAIT
+      );
+
+      // console.log("---", tableExist);
+    } catch (error) {
+      console.log(error);
+
+      console.log("NAO EXISTE, REFRESH");
+      await this.driver.navigate().refresh();
+
+      console.log(" DEPOIS DO REFRESH");
+      return await this.getMonitoringInfoData();
+    }
+
+    const saleTableElement = await this.driver.findElement(saleTableLocator);
+
+    const saleQuantityElement = await saleTableElement.findElement(
+      saleQuantityLocator
+    );
+
+    const saleStartingValueElement = await saleTableElement.findElement(
+      saleStartingValueLocator
+    );
+
+    const saleQuantityText = await saleQuantityElement.getText();
+    const saleStartingValueText = await saleStartingValueElement.getText();
+    // const tableText = await tableElement.getText();
+
+    const saleTableRows = await saleTableElement.findElements(By.css("tr"));
+    saleTableRows.shift();
+
+    const saleTableValues = await this.getTableData(saleTableRows);
+
+    const saleData = {
+      saleQuantityText,
+      saleStartingValueText,
+      saleTableValues,
+    };
+
+    ///////////////////////////////////////////////////
+    console.log("INICIO DO GET MONITORING DATA");
+
+    const orderTableLocator = By.xpath(
+      '//*[@id="market_commodity_buyreqeusts_table"]/table'
+    );
+
+    const orderQuantityLocator = By.xpath(
+      '//*[@id="market_commodity_buyreqeusts_table"]/../..//span[1]'
+    );
+
+    const orderStartingValueLocator = By.xpath(
+      '//*[@id="market_commodity_buyreqeusts_table"]/../..//span[2]'
+    );
+
+    // const tableContainerLocator = By.xpath(
+    //   '//*[@id="market_commodity_buyreqeusts_table"]'
+    // );
+
+    // const tableContainerExist = await this.driver.wait(
+    //   until.elementLocated(tableContainerLocator),
+    //   1000
+    // );
+
+    // console.log("---", tableContainerExist);
+
+    try {
+      // throw new Error("ERROOOOOO");
+      const tableExist = await this.driver.wait(
+        until.elementLocated(orderTableLocator),
+        TABLE_WAIT
+      );
+
+      // console.log("---", tableExist);
+    } catch (error) {
+      console.log(error);
+
+      console.log("NAO EXISTE, REFRESH");
+      await this.driver.navigate().refresh();
+
+      console.log(" DEPOIS DO REFRESH");
+      return await this.getMonitoringInfoData();
+    }
+
+    const orderTableElement = await this.driver.findElement(orderTableLocator);
+
+    const orderQuantityElement = await orderTableElement.findElement(
+      orderQuantityLocator
+    );
+
+    const orderStartingValueElement = await orderTableElement.findElement(
+      orderStartingValueLocator
+    );
+
+    const orderQuantityText = await orderQuantityElement.getText();
+    const orderStartingValueText = await orderStartingValueElement.getText();
+
+    const orderTableRows = await orderTableElement.findElements(By.css("tr"));
+    orderTableRows.shift();
+
+    const orderTableValues = await this.getTableData(orderTableRows);
+
+    // const tableText = await tableElement.getText();
+
+    const orderData = {
+      orderQuantityText,
+      orderStartingValueText,
+      orderTableValues,
+    };
+
+    return {
+      saleQuantity: saleData.saleQuantityText,
+      saleStartingValue: saleData.saleStartingValueText,
+      saleTable: saleData.saleTableValues,
+      orderQuantity: orderData.orderQuantityText,
+      orderStartingValue: orderData.orderStartingValueText,
+      orderTable: orderData.orderTableValues,
     };
   }
 
