@@ -437,8 +437,8 @@ export class Driver {
         const values = await row.findElements(By.css("td"));
         return {
           value: (await values[0].getText())
-            .replace("or more", "")
-            .replace("or less", ""),
+            .replace("or more", "or >")
+            .replace("or less", "or <"),
           quantity: await values[1].getText(),
         };
       })
