@@ -1,46 +1,54 @@
 export interface ISticker {
-  name: string;
-  value: string;
-  link: string;
-  image: string;
+  name: string
+  value: string
+  link: string
+  image: string
+  id: string
 }
 
-type IStickerWithouValue = Omit<ISticker, "value">;
+type IStickerWithouValue = Omit<ISticker, 'value'>
 
 export interface ISale extends IStickerWithouValue {
-  sellValue: string;
-  buyValue: string;
-  receiveValue: string;
-  profitValue: string;
-  profitPercent: string;
+  sellValue: string
+  buyValue: string
+  receiveValue: string
+  profitValue: string
+  profitPercent: string
 }
 
 export interface IOrder extends IStickerWithouValue {
-  buyValue: string;
-  quantity: string;
+  buyValue: string
+  quantity: string
 }
 
 export interface IMonitoring extends IStickerWithouValue {
-  buyValue: string;
+  buyValue: string
 }
 
 export interface ISaleInfos {
-  quantity: string;
-  startingValue: string;
-  table: { value: string; quantity: string }[];
+  quantity: string
+  startingValue: string
+  table: Array<{ value: string, quantity: string }>
 }
 
 export interface IOrderInfos {
-  quantity: string;
-  startingValue: string;
-  table: { value: string; quantity: string }[];
+  quantity: string
+  startingValue: string
+  table: Array<{ value: string, quantity: string }>
 }
 
 export interface IMonitoringInfos {
-  saleQuantity: string;
-  saleStartingValue: string;
-  orderQuantity: string;
-  orderStartingValue: string;
-  saleTable: { value: string; quantity: string }[];
-  orderTable: { value: string; quantity: string }[];
+  saleQuantity: string
+  saleStartingValue: string
+  orderQuantity: string
+  orderStartingValue: string
+  saleTable: Array<{ value: string, quantity: string }>
+  orderTable: Array<{ value: string, quantity: string }>
+}
+
+export interface IStickerMakeOrder {
+  name: string
+  value: string
+  quantity: string
+  link: string
 }
